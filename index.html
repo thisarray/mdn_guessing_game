@@ -31,16 +31,20 @@ body {
 <main>
 <h1>Number guessing game</h1>
 
-<p>We have selected a random number between 1 and 1000. See if you can guess it in 10 turns or fewer.
+<p>We have selected a random number between 1 and 1000.
+See if you can guess it in 10 turns or fewer.
 We'll tell you if your guess was <span class="high">too high</span> or <span class="low">too low</span>.</p>
 
 <p>The best strategy is to divide and conquer: eliminate half of the remaining numbers with each guess.</p>
 
-<form id="guessForm">
-  <label for="guessField">Enter a guess: </label>
-  <input type="tel" id="guessField" name="guess" maxlength="4" minlength="0" pattern="[0-9]*" spellcheck="false">
-  <button type="submit" id="guessSubmit">Submit guess</button>
-  <button type="reset" id="guessReset">Reset game</button>
+<form id="guessForm" name="guessForm">
+<p>
+  <label>Enter a guess:
+  <input type="tel" id="guess" name="guess" autofocus required maxlength="4" minlength="1" pattern="[0-9]+" placeholder="500" spellcheck="false">
+  </label>
+  <button type="submit" id="guessSubmit">Submit</button>
+  <button type="reset" id="guessReset">Reset</button>
+</p>
 </form>
 
 <h2>Guess history</h2>
@@ -51,45 +55,44 @@ We'll tell you if your guess was <span class="high">too high</span> or <span cla
 
 <script>
 /*
- * Number of attempts the user has to guess the number.
+ * Integer number of attempts the user has to guess the number.
  */
 const ATTEMPT_COUNT = 10;
 
 /*
- * Number largest random number selected.
+ * Integer largest random number selected.
  */
 const MAXIMUM_NUMBER = 1000;
 
 /*
- * Number smallest random number selected.
+ * Integer smallest random number selected.
  */
 const MINIMUM_NUMBER = 1;
 
-const form = document.querySelector('#guessForm');
-const field = document.querySelector('#guessField');
-const submit = document.querySelector('#guessSubmit');
-const reset = document.querySelector('#guessReset');
-const output = document.querySelector('#guessHistory');
+const FORM = document.querySelector('#guessForm');
+const FIELD = document.querySelector('#guess');
+const SUBMIT = document.querySelector('#guessSubmit');
+const RESET = document.querySelector('#guessReset');
+const OUTPUT = document.querySelector('#guessHistory');
 
 let randomNumber = MINIMUM_NUMBER,
     guessCount = 0;
 
 function disableForm() {
-  field.disabled = true;
-  submit.disabled = true;
+  FIELD.disabled = true;
+  SUBMIT.disabled = true;
 }
 
 function resetGame() {
-  field.disabled = false;
-  submit.disabled = false;
-  output.innerHTML = '';
+  FIELD.disabled = false;
+  SUBMIT.disabled = false;
+  OUTPUT.innerHTML = '';
   randomNumber = Math.floor(Math.random() * MAXIMUM_NUMBER) + MINIMUM_NUMBER;
   guessCount = 0;
 }
-resetGame();
 
-form.addEventListener('submit', (event) => {
-  let guess = Number(field.value),
+FORM.addEventListener('submit', (event) => {
+  let guess = parseInt(FORM.guess.value, 10),
       item = document.createElement('li');
   guessCount++;
 
@@ -97,7 +100,7 @@ form.addEventListener('submit', (event) => {
     item.appendChild(document.createTextNode(`Congratulations! You got it right! The number was ${ randomNumber }.`));
     disableForm();
   }
-  else if (guessCount === ATTEMPT_COUNT) {
+  else if (guessCount >= ATTEMPT_COUNT) {
     item.appendChild(document.createTextNode(`!!!GAME OVER!!! The number was ${ randomNumber }.`));
     disableForm();
   }
@@ -111,16 +114,18 @@ form.addEventListener('submit', (event) => {
       item.classList.add('high');
     }
   }
-  output.appendChild(item);
+  OUTPUT.appendChild(item);
 
-  field.value = '';
-  field.focus();
+  FIELD.value = '';
+  FIELD.focus();
   event.preventDefault();
 });
-reset.addEventListener('click', (event) => {
+RESET.addEventListener('click', (event) => {
   resetGame();
   event.preventDefault();
 });
+
+resetGame();
 </script>
 </body>
 
